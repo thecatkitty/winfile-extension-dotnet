@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Vanara.PInvoke;
 
 namespace Celones.Windows.FileManager
 {
@@ -7,6 +8,7 @@ namespace Celones.Windows.FileManager
     {
         public event EventHandler<LoadEventArgs> Load;
         public event EventHandler Unload;
+        public event EventHandler<MenuInitializeEventArgs> MenuInitialize;
 
         public int ExtensionProc(IntPtr hWnd, IntPtr wEvent, IntPtr lParam)
         {
@@ -28,22 +30,29 @@ namespace Celones.Windows.FileManager
                 return OnUnload() ? 0 : -1;
             }
 
+            if ((int)wEvent == Interop.FMEVENT_INITMENU)
+            {
+                return OnMenuInitialize(new MenuInitializeEventArgs(lParam)) ? 0 : -1;
+            }
+
             return 0;
         }
 
         protected virtual bool OnLoad(LoadEventArgs e)
         {
-            if (Load is null) return false;
-
-            Load.Invoke(this, e);
+            Load?.Invoke(this, e);
             return true;
         }
 
         protected virtual bool OnUnload()
         {
-            if (Unload is null) return false;
+            Unload?.Invoke(this, new());
+            return true;
+        }
 
-            Unload.Invoke(this, new());
+        protected virtual bool OnMenuInitialize(MenuInitializeEventArgs e)
+        {
+            MenuInitialize?.Invoke(this, e);
             return true;
         }
     }
