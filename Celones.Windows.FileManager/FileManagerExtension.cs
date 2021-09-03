@@ -5,6 +5,8 @@ namespace Celones.Windows.FileManager
 {
     public abstract class FileManagerExtension
     {
+        public event EventHandler<LoadEventArgs> Load;
+
         public int ExtensionProc(IntPtr hWnd, IntPtr wEvent, IntPtr lParam)
         {
             if ((int)wEvent == Interop.FMEVENT_LOAD)
@@ -23,6 +25,12 @@ namespace Celones.Windows.FileManager
             return 0;
         }
 
-        protected virtual bool OnLoad(LoadEventArgs e) => false;
+        protected virtual bool OnLoad(LoadEventArgs e)
+        {
+            if (Load is null) return false;
+
+            Load.Invoke(this, e);
+            return true;
+        }
     }
 }
