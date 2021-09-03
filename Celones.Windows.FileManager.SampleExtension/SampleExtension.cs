@@ -27,6 +27,13 @@ namespace Celones.Windows.FileManager.SampleExtension
             e.MenuName = "AddonSampleMenu";
             e.MenuHandle = User32.GetSubMenu(User32.LoadMenu(_hInstance, 101), 0);
 
+            base.OnLoad(e);
+            return true;
+        }
+
+        protected override bool OnUnload()
+        {
+            base.OnUnload();
             return true;
         }
     }
