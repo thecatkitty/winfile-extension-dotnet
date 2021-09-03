@@ -13,28 +13,35 @@ namespace Celones.Windows.FileManager.SampleExtension
         public static int EntryPoint(IntPtr hWnd, IntPtr wEvent, IntPtr lParam)
             => _extension.ExtensionProc(hWnd, wEvent, lParam);
 
-        private readonly HINSTANCE _hInstance;
+        private readonly HINSTANCE _instance;
+        private readonly uint _menuDelta;
+        private bool _toggled = false;
 
         public SampleExtension()
         {
             var name = typeof(SampleExtension).Namespace + ".dll";
-            _hInstance = Kernel32.EnumProcessModules(Kernel32.GetCurrentProcess())
+            _instance = Kernel32.EnumProcessModules(Kernel32.GetCurrentProcess())
                 .First(module => Kernel32.GetModuleFileName(module).EndsWith(name));
         }
 
         protected override bool OnLoad(LoadEventArgs e)
         {
             e.MenuName = "AddonSampleMenu";
-            e.MenuHandle = User32.GetSubMenu(User32.LoadMenu(_hInstance, 101), 0);
+            e.MenuHandle = User32.GetSubMenu(User32.LoadMenu(_instance, 101), 0);
 
-            base.OnLoad(e);
-            return true;
+            return base.OnLoad(e);
         }
 
-        protected override bool OnUnload()
+        protected override bool OnMenuInitialize(MenuInitializeEventArgs e)
         {
-            base.OnUnload();
-            return true;
+            User32.CheckMenuItem(
+                hMenu: e.Menu,
+                uIDCheckItem: _menuDelta + 8,
+                uCheck: _toggled
+                ? User32.MenuFlags.MF_BYCOMMAND | User32.MenuFlags.MF_CHECKED
+                : User32.MenuFlags.MF_BYCOMMAND | User32.MenuFlags.MF_UNCHECKED);
+
+            return base.OnMenuInitialize(e);
         }
     }
 }
