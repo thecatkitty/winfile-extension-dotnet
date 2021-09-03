@@ -100,11 +100,5 @@ namespace Celones.Windows.FileManager
 
         public delegate uint FM_EXT_PROC(IntPtr hWnd, IntPtr wEvent, IntPtr lParam);
         public delegate uint FM_UNDELETE_PROC(IntPtr hWnd, [MarshalAs(UnmanagedType.LPTStr)] string lpStr);
-
-        [UnmanagedCallersOnly]
-        public static int FMExtensionProcW(IntPtr hWnd, IntPtr wEvent, IntPtr lParam)
-        {
-            return 1;
-        }
     }
 }
