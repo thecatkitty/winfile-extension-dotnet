@@ -52,5 +52,12 @@ namespace Celones.Windows.FileManager.SampleExtension
             e.BitmapId = 102;
             return base.OnToolbarLoad(e);
         }
+
+        protected override bool OnContextHelp(ContextHelpEventArgs e)
+        {
+            User32.MessageBox(e.Window, $"Help for {e.CommandId}", "WinHelp call", User32.MB_FLAGS.MB_OK);
+            // User32.WinHelp(e.Window, "ExtHelp.hlp", User32.HelpCmd.HELP_CONTEXT, (IntPtr)e.CommandId);
+            return base.OnContextHelp(e);
+        }
     }
 }
