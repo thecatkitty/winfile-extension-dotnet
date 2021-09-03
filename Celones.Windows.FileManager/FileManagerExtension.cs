@@ -15,7 +15,7 @@ namespace Celones.Windows.FileManager
 
                 load.dwSize = (uint)Marshal.SizeOf(load);
                 load.szMenuName = e.MenuName;
-                load.hMenu = e.MenuHandle;
+                load.hMenu = (IntPtr)e.MenuHandle;
                 Marshal.StructureToPtr(load, lParam, true);
                 return 1;
             }
