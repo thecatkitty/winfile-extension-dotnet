@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Vanara.PInvoke;
 
 namespace Celones.Windows.FileManager
 {
@@ -11,6 +12,7 @@ namespace Celones.Windows.FileManager
         public event EventHandler<ToolbarLoadEventArgs> ToolbarLoad;
         public event EventHandler UserRefresh;
         public event EventHandler SelectionChanged;
+        public event EventHandler<ContextHelpEventArgs> ContextHelp;
 
         private IntPtr _buttons;
 
@@ -73,6 +75,9 @@ namespace Celones.Windows.FileManager
                 case Interop.FMEVENT_SELCHANGE:
                     return OnSelectionChanged() ? 0 : -1;
 
+                case Interop.FMEVENT_HELPMENUITEM:
+                    return OnContextHelp(new ContextHelpEventArgs(hWnd, (ushort)lParam)) ? 0 : -1;
+
                 default:
                     return 0;
             }
@@ -118,6 +123,12 @@ namespace Celones.Windows.FileManager
         protected virtual bool OnSelectionChanged()
         {
             SelectionChanged?.Invoke(this, EventArgs.Empty);
+            return true;
+        }
+
+        protected virtual bool OnContextHelp(ContextHelpEventArgs e)
+        {
+            ContextHelp?.Invoke(this, e);
             return true;
         }
     }
