@@ -9,6 +9,7 @@ namespace Celones.Windows.FileManager
         public event EventHandler Unload;
         public event EventHandler<MenuInitializeEventArgs> MenuInitialize;
         public event EventHandler<ToolbarLoadEventArgs> ToolbarLoad;
+        public event EventHandler UserRefresh;
 
         private IntPtr _buttons;
 
@@ -65,6 +66,9 @@ namespace Celones.Windows.FileManager
                     return 1;
                 }
 
+                case Interop.FMEVENT_USER_REFRESH:
+                    return OnUserRefresh() ? 0 : -1;
+
                 default:
                     return 0;
             }
@@ -99,6 +103,12 @@ namespace Celones.Windows.FileManager
         {
             ToolbarLoad?.Invoke(this, e);
             return e.Buttons.Count > 0;
+        }
+
+        protected virtual bool OnUserRefresh()
+        {
+            UserRefresh?.Invoke(this, EventArgs.Empty);
+            return true;
         }
     }
 }
