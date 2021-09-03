@@ -14,7 +14,7 @@ namespace Celones.Windows.FileManager.SampleExtension
             => _extension.ExtensionProc(hWnd, wEvent, lParam);
 
         private readonly HINSTANCE _instance;
-        private readonly uint _menuDelta;
+        private uint _menuDelta;
         private bool _toggled = false;
 
         public SampleExtension()
@@ -28,6 +28,7 @@ namespace Celones.Windows.FileManager.SampleExtension
         {
             e.MenuName = "AddonSampleMenu";
             e.MenuHandle = User32.GetSubMenu(User32.LoadMenu(_instance, 101), 0);
+            _menuDelta = e.MenuDelta;
 
             return base.OnLoad(e);
         }
@@ -42,6 +43,14 @@ namespace Celones.Windows.FileManager.SampleExtension
                 : User32.MenuFlags.MF_BYCOMMAND | User32.MenuFlags.MF_UNCHECKED);
 
             return base.OnMenuInitialize(e);
+        }
+
+        protected override bool OnToolbarLoad(ToolbarLoadEventArgs e)
+        {
+            e.Buttons.Add(new ToolbarButton { CommandId = 1 });
+            e.BitmappedCount = 1;
+            e.BitmapId = 102;
+            return base.OnToolbarLoad(e);
         }
     }
 }

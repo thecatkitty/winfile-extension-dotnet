@@ -1,4 +1,5 @@
 #define IDR_MENU                        101
+#define IDB_TEST                        102
 
 #define IDM_FIRSTBUTTON 1
 #define IDM_TESTMENU    2
@@ -12,3 +13,6 @@ BEGIN
 		MENUITEM "Toggle", IDM_TOGGLE
 	END
 END
+
+
+IDB_TEST                BITMAP                  "AddonSample.bmp"
