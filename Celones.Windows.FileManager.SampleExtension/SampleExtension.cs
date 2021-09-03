@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Vanara.PInvoke;
+using System;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace Celones.Windows.FileManager.SampleExtension
 {
@@ -11,13 +13,20 @@ namespace Celones.Windows.FileManager.SampleExtension
         public static int EntryPoint(IntPtr hWnd, IntPtr wEvent, IntPtr lParam)
             => _extension.ExtensionProc(hWnd, wEvent, lParam);
 
+        private readonly HINSTANCE _hInstance;
+
+        public SampleExtension()
+        {
+            var name = typeof(SampleExtension).Namespace + ".dll";
+            _hInstance = Kernel32.EnumProcessModules(Kernel32.GetCurrentProcess())
+                .First(module => Kernel32.GetModuleFileName(module).EndsWith(name));
+        }
+
         protected override bool OnLoad(LoadEventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show(
-                text: "Hello World!",
-                caption: "Windows File Manager managed extension",
-                System.Windows.Forms.MessageBoxButtons.OK,
-                System.Windows.Forms.MessageBoxIcon.Exclamation);
+            e.MenuName = "AddonSampleMenu";
+            e.MenuHandle = User32.GetSubMenu(User32.LoadMenu(_hInstance, 101), 0);
+
             return true;
         }
     }

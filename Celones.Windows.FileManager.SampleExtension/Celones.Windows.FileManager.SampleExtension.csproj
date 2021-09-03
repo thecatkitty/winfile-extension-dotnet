@@ -2,15 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
+    <!--<UseWindowsForms>true</UseWindowsForms>-->
     <NativeLib>Shared</NativeLib>
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <Win32Resource>obj/resource.res</Win32Resource>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.21431.2" />
+    <PackageReference Include="Vanara.PInvoke.Kernel32" Version="3.3.12" />
+    <PackageReference Include="Vanara.PInvoke.User32" Version="3.3.12" />
     <ProjectReference Include="../Celones.Windows.FileManager/Celones.Windows.FileManager.csproj" />
   </ItemGroup>
+  
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="rc.exe /nologo /r /c 65001 /fo obj/resource.res $(ProjectDir)resource.rc" />
+  </Target>
 
 </Project>

@@ -1,0 +1,14 @@
+#define IDR_MENU                        101
+
+#define IDM_FIRSTBUTTON 1
+#define IDM_TESTMENU    2
+#define IDM_TOGGLE      8
+
+IDR_MENU MENU
+BEGIN
+	POPUP "AddonSampleMenu"
+	BEGIN
+		MENUITEM "Test entry 1234", IDM_TESTMENU
+		MENUITEM "Toggle", IDM_TOGGLE
+	END
+END
