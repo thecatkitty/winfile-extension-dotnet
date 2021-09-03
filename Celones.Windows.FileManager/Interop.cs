@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+// ReSharper disable InconsistentNaming
 
 namespace Celones.Windows.FileManager
 {
-    class Interop
+    internal class Interop
     {
         public const int WM_USER = 0x0400;
 

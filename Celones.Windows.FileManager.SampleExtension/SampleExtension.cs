@@ -7,11 +7,11 @@ namespace Celones.Windows.FileManager.SampleExtension
 {
     public class SampleExtension : FileManagerExtension
     {
-        private static SampleExtension _extension = new();
+        private static readonly SampleExtension s_extension = new();
 
         [UnmanagedCallersOnly(EntryPoint = "FMExtensionProcW")]
         public static int EntryPoint(IntPtr hWnd, IntPtr wEvent, IntPtr lParam)
-            => _extension.ExtensionProc(hWnd, wEvent, lParam);
+            => s_extension.ExtensionProc(hWnd, wEvent, lParam);
 
         private readonly HINSTANCE _instance;
         private uint _menuDelta;

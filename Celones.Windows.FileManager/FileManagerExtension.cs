@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using Vanara.PInvoke;
 
 namespace Celones.Windows.FileManager
 {
@@ -15,69 +14,67 @@ namespace Celones.Windows.FileManager
 
         public int ExtensionProc(IntPtr hWnd, IntPtr wEvent, IntPtr lParam)
         {
-            if ((int)wEvent == Interop.FMEVENT_LOAD)
+            switch ((int)wEvent)
             {
-                var load = Marshal.PtrToStructure<Interop.FMS_LOADW>(lParam);
-                var e = new LoadEventArgs(load.wMenuDelta);
-                if (!OnLoad(e)) return 0;
-
-                load.dwSize = (uint)Marshal.SizeOf(load);
-                load.szMenuName = e.MenuName;
-                load.hMenu = (IntPtr)e.MenuHandle;
-                Marshal.StructureToPtr(load, lParam, true);
-                return 1;
-            }
-
-            if ((int)wEvent == Interop.FMEVENT_UNLOAD)
-            {
-                return OnUnload() ? 0 : -1;
-            }
-
-            if ((int)wEvent == Interop.FMEVENT_INITMENU)
-            {
-                return OnMenuInitialize(new MenuInitializeEventArgs(lParam)) ? 0 : -1;
-            }
-
-            if ((int)wEvent == Interop.FMEVENT_TOOLBARLOAD)
-            {
-                var load = Marshal.PtrToStructure<Interop.FMS_TOOLBARLOAD>(lParam);
-                var e = new ToolbarLoadEventArgs();
-                if (!OnToolbarLoad(e)) return 0;
-
-                if (_buttons == IntPtr.Zero)
+                case Interop.FMEVENT_LOAD:
                 {
-                    _buttons = Marshal.AllocHGlobal(e.Buttons.Count * Marshal.SizeOf<Interop.EXT_BUTTON>());
+                    var load = Marshal.PtrToStructure<Interop.FMS_LOADW>(lParam);
+                    var e = new LoadEventArgs(load.wMenuDelta);
+                    if (!OnLoad(e)) return 0;
+
+                    load.dwSize = (uint)Marshal.SizeOf(load);
+                    load.szMenuName = e.MenuName;
+                    load.hMenu = (IntPtr)e.MenuHandle;
+                    Marshal.StructureToPtr(load, lParam, true);
+                    return 1;
                 }
 
-                for (var i = 0; i < e.Buttons.Count; i++)
+                case Interop.FMEVENT_UNLOAD:
+                    return OnUnload() ? 0 : -1;
+
+                case Interop.FMEVENT_INITMENU:
+                    return OnMenuInitialize(new MenuInitializeEventArgs(lParam)) ? 0 : -1;
+
+                case Interop.FMEVENT_TOOLBARLOAD:
                 {
-                    Interop.EXT_BUTTON button;
-                    button.idCommand = e.Buttons[i].CommandId;
-                    button.idsHelp = e.Buttons[i].HelpId;
-                    button.fsStyle = (ushort)e.Buttons[i].Style;
-                    Marshal.StructureToPtr(button, _buttons + i * Marshal.SizeOf(button), true);
+                    var load = Marshal.PtrToStructure<Interop.FMS_TOOLBARLOAD>(lParam);
+                    var e = new ToolbarLoadEventArgs();
+                    if (!OnToolbarLoad(e)) return 0;
+
+                    if (_buttons == IntPtr.Zero)
+                    {
+                        _buttons = Marshal.AllocHGlobal(e.Buttons.Count * Marshal.SizeOf<Interop.EXT_BUTTON>());
+                    }
+
+                    for (var i = 0; i < e.Buttons.Count; i++)
+                    {
+                        Interop.EXT_BUTTON button;
+                        button.idCommand = e.Buttons[i].CommandId;
+                        button.idsHelp = e.Buttons[i].HelpId;
+                        button.fsStyle = (ushort)e.Buttons[i].Style;
+                        Marshal.StructureToPtr(button, _buttons + i * Marshal.SizeOf(button), true);
+                    }
+
+                    load.dwSize = (uint)Marshal.SizeOf(load);
+                    load.lpButtons = _buttons;
+                    load.cButtons = (ushort)e.Buttons.Count;
+                    load.cBitmaps = e.BitmappedCount;
+                    load.idBitmap = e.BitmapHandle.IsNull ? e.BitmapId : (ushort)0;
+                    load.hBitmap = (IntPtr)e.BitmapHandle;
+                    Marshal.StructureToPtr(load, lParam, true);
+                    return 1;
                 }
 
-                load.dwSize = (uint)Marshal.SizeOf(load);
-                load.lpButtons = _buttons;
-                load.cButtons = (ushort)e.Buttons.Count;
-                load.cBitmaps = e.BitmappedCount;
-                load.idBitmap = e.BitmapHandle.IsNull ? e.BitmapId : (ushort)0;
-                load.hBitmap = (IntPtr)e.BitmapHandle;
-                Marshal.StructureToPtr(load, lParam, true);
-                return 1;
+                default:
+                    return 0;
             }
-
-            return 0;
         }
 
         ~FileManagerExtension()
         {
-            if (_buttons != IntPtr.Zero)
-            {
-                Marshal.FreeHGlobal(_buttons);
-                _buttons = IntPtr.Zero;
-            }
+            if (_buttons == IntPtr.Zero) return;
+            Marshal.FreeHGlobal(_buttons);
+            _buttons = IntPtr.Zero;
         }
 
         protected virtual bool OnLoad(LoadEventArgs e)
@@ -88,7 +85,7 @@ namespace Celones.Windows.FileManager
 
         protected virtual bool OnUnload()
         {
-            Unload?.Invoke(this, new());
+            Unload?.Invoke(this, EventArgs.Empty);
             return true;
         }
 
