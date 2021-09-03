@@ -53,6 +53,16 @@ namespace Celones.Windows.FileManager.SampleExtension
             return base.OnToolbarLoad(e);
         }
 
+        protected override bool OnHelpString(HelpStringEventArgs e)
+        {
+            e.Help = e.CommandId switch
+            {
+                -1 => "The mouse is over the menu item (Extension).",
+                _ => $"Tooltip for item {e.CommandId}"
+            };
+            return base.OnHelpString(e);
+        }
+
         protected override bool OnContextHelp(ContextHelpEventArgs e)
         {
             User32.MessageBox(e.Window, $"Help for {e.CommandId}", "WinHelp call", User32.MB_FLAGS.MB_OK);
