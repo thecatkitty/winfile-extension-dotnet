@@ -47,7 +47,7 @@ namespace Celones.Windows.FileManager
         public struct FMS_GETFILESELW
         {
             public System.Runtime.InteropServices.ComTypes.FILETIME ftTime;
-            public UInt32 dwSize;
+            public uint dwSize;
             public byte bAttr;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string szName;
         }
@@ -55,8 +55,8 @@ namespace Celones.Windows.FileManager
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         public struct FMS_GETDRIVEINFOW
         {
-            public UInt32 dwTotalSpace;
-            public UInt32 dwFreeSpace;
+            public uint dwTotalSpace;
+            public uint dwFreeSpace;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string szPath;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)] public string szVolume;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string szShare;
@@ -65,7 +65,7 @@ namespace Celones.Windows.FileManager
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         public struct FMS_LOADW
         {
-            public UInt32 dwSize;
+            public uint dwSize;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MENU_TEXT_LEN)] public string szMenuName;
             public IntPtr hMenu;
             public uint wMenuDelta;
@@ -74,19 +74,19 @@ namespace Celones.Windows.FileManager
         [StructLayout(LayoutKind.Sequential)]
         public struct EXT_BUTTON
         {
-            public UInt16 idCommand;
-            public UInt16 idsHelp;
-            public UInt16 fsStyle;
+            public ushort idCommand;
+            public ushort idsHelp;
+            public ushort fsStyle;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct FMS_TOOLBARLOAD
         {
-            public UInt32 dwSize;
+            public uint dwSize;
             public IntPtr lpButtons;
-            public UInt16 cButtons;
-            public UInt16 cBitmaps;
-            public UInt16 idBitmap;
+            public ushort cButtons;
+            public ushort cBitmaps;
+            public ushort idBitmap;
             public IntPtr hBitmap;
         }
 
@@ -98,11 +98,11 @@ namespace Celones.Windows.FileManager
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string szHelp;
         }
 
-        public delegate UInt32 FM_EXT_PROC(IntPtr hWnd, IntPtr wEvent, IntPtr lParam);
-        public delegate UInt32 FM_UNDELETE_PROC(IntPtr hWnd, [MarshalAs(UnmanagedType.LPTStr)] string lpStr);
+        public delegate uint FM_EXT_PROC(IntPtr hWnd, IntPtr wEvent, IntPtr lParam);
+        public delegate uint FM_UNDELETE_PROC(IntPtr hWnd, [MarshalAs(UnmanagedType.LPTStr)] string lpStr);
 
         [UnmanagedCallersOnly]
-        public static Int32 FMExtensionProcW(IntPtr hWnd, IntPtr wEvent, IntPtr lParam)
+        public static int FMExtensionProcW(IntPtr hWnd, IntPtr wEvent, IntPtr lParam)
         {
             return 1;
         }
