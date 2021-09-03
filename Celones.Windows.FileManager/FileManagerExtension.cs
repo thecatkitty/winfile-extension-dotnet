@@ -10,6 +10,7 @@ namespace Celones.Windows.FileManager
         public event EventHandler<MenuInitializeEventArgs> MenuInitialize;
         public event EventHandler<ToolbarLoadEventArgs> ToolbarLoad;
         public event EventHandler UserRefresh;
+        public event EventHandler SelectionChanged;
 
         private IntPtr _buttons;
 
@@ -69,6 +70,9 @@ namespace Celones.Windows.FileManager
                 case Interop.FMEVENT_USER_REFRESH:
                     return OnUserRefresh() ? 0 : -1;
 
+                case Interop.FMEVENT_SELCHANGE:
+                    return OnSelectionChanged() ? 0 : -1;
+
                 default:
                     return 0;
             }
@@ -108,6 +112,12 @@ namespace Celones.Windows.FileManager
         protected virtual bool OnUserRefresh()
         {
             UserRefresh?.Invoke(this, EventArgs.Empty);
+            return true;
+        }
+
+        protected virtual bool OnSelectionChanged()
+        {
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
             return true;
         }
     }
