@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using static Celones.Windows.FileManager.Interop;
 
 namespace Celones.Windows.FileManager
 {
@@ -20,73 +21,55 @@ namespace Celones.Windows.FileManager
         {
             switch ((int)wEvent)
             {
-                case Interop.FMEVENT_LOAD:
+                case FMEVENT_LOAD:
                 {
-                    var load = Marshal.PtrToStructure<Interop.FMS_LOADW>(lParam);
-                    var e = new LoadEventArgs(load.wMenuDelta);
+                    var (e, load) = EventArgsConverters.GetLoadEventArgs(lParam);
                     if (!OnLoad(e)) return 0;
 
-                    load.dwSize = (uint)Marshal.SizeOf(load);
-                    load.szMenuName = e.MenuName;
-                    load.hMenu = (IntPtr)e.MenuHandle;
-                    Marshal.StructureToPtr(load, lParam, true);
+                    EventArgsConverters.Update(ref load, e);
+                    EventArgsConverters.Set(lParam, load);
                     return 1;
                 }
 
-                case Interop.FMEVENT_UNLOAD:
+                case FMEVENT_UNLOAD:
                     return OnUnload() ? 0 : -1;
 
-                case Interop.FMEVENT_INITMENU:
-                    return OnMenuInitialize(new MenuInitializeEventArgs(lParam)) ? 0 : -1;
+                case FMEVENT_INITMENU:
+                    return OnMenuInitialize(EventArgsConverters.GetMenuInitializeEventArgs(lParam)) ? 0 : -1;
 
-                case Interop.FMEVENT_TOOLBARLOAD:
+                case FMEVENT_TOOLBARLOAD:
                 {
-                    var load = Marshal.PtrToStructure<Interop.FMS_TOOLBARLOAD>(lParam);
-                    var e = new ToolbarLoadEventArgs();
+                    var (e, load) = EventArgsConverters.GetToolbarLoadEventArgs(lParam);
                     if (!OnToolbarLoad(e)) return 0;
 
                     if (_buttons == IntPtr.Zero)
                     {
-                        _buttons = Marshal.AllocHGlobal(e.Buttons.Count * Marshal.SizeOf<Interop.EXT_BUTTON>());
+                        _buttons = Marshal.AllocHGlobal(e.Buttons.Count * Marshal.SizeOf<EXT_BUTTON>());
                     }
-
-                    for (var i = 0; i < e.Buttons.Count; i++)
-                    {
-                        Interop.EXT_BUTTON button;
-                        button.idCommand = e.Buttons[i].CommandId;
-                        button.idsHelp = e.Buttons[i].HelpId;
-                        button.fsStyle = (ushort)e.Buttons[i].Style;
-                        Marshal.StructureToPtr(button, _buttons + i * Marshal.SizeOf(button), true);
-                    }
-
-                    load.dwSize = (uint)Marshal.SizeOf(load);
                     load.lpButtons = _buttons;
-                    load.cButtons = (ushort)e.Buttons.Count;
-                    load.cBitmaps = e.BitmappedCount;
-                    load.idBitmap = e.BitmapHandle.IsNull ? e.BitmapId : (ushort)0;
-                    load.hBitmap = (IntPtr)e.BitmapHandle;
-                    Marshal.StructureToPtr(load, lParam, true);
+
+                    EventArgsConverters.Update(ref load, e);
+                    EventArgsConverters.Set(lParam, load);
                     return 1;
                 }
 
-                case Interop.FMEVENT_USER_REFRESH:
+                case FMEVENT_USER_REFRESH:
                     return OnUserRefresh() ? 0 : -1;
 
-                case Interop.FMEVENT_SELCHANGE:
+                case FMEVENT_SELCHANGE:
                     return OnSelectionChanged() ? 0 : -1;
 
-                case Interop.FMEVENT_HELPSTRING:
+                case FMEVENT_HELPSTRING:
                 {
-                    var help = Marshal.PtrToStructure<Interop.FMS_HELPSTRINGW>(lParam);
-                    var e = new HelpStringEventArgs(help.idCommand, help.hMenu);
+                    var (e, help) = EventArgsConverters.GetHelpStringEventArgs(lParam);
                     if (!OnHelpString(e)) return -1;
 
-                    help.szHelp = e.Help;
-                    Marshal.StructureToPtr(help, lParam, true);
+                    EventArgsConverters.Update(ref help, e);
+                    EventArgsConverters.Set(lParam, help);
                     return 0;
                 }
 
-                case Interop.FMEVENT_HELPMENUITEM:
+                case FMEVENT_HELPMENUITEM:
                     return OnContextHelp(new ContextHelpEventArgs(hWnd, (ushort)lParam)) ? 0 : -1;
 
                 default:
