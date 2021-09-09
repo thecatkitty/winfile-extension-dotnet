@@ -2,11 +2,16 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Linq;
+// ReSharper disable InconsistentNaming
 
 namespace Celones.Windows.FileManager.SampleExtension
 {
     public class SampleExtension : FileManagerExtension
     {
+        private const int IDM_FIRSTBUTTON = 1;
+        private const int IDM_TESTMENU = 2;
+        private const int IDM_TOGGLE = 8;
+
         private static readonly SampleExtension s_extension = new();
 
         [UnmanagedCallersOnly(EntryPoint = "FMExtensionProcW")]
@@ -68,6 +73,53 @@ namespace Celones.Windows.FileManager.SampleExtension
             User32.MessageBox(e.Window, $"Help for {e.CommandId}", "WinHelp call", User32.MB_FLAGS.MB_OK);
             // User32.WinHelp(e.Window, "ExtHelp.hlp", User32.HelpCmd.HELP_CONTEXT, (IntPtr)e.CommandId);
             return base.OnContextHelp(e);
+        }
+
+        protected override int OnCommand(CommandEventArgs e)
+        {
+            switch (e.Command)
+            {
+                case IDM_FIRSTBUTTON:
+                {
+                    switch (Focus)
+                    {
+                        case FocusTarget.Directory:
+                        {
+                            User32.MessageBox(e.Window, "Focus is on the right side.", "Test-Plugin", User32.MB_FLAGS.MB_OK);
+                            break;
+                        }
+
+                        case FocusTarget.Tree:
+                        {
+                            User32.MessageBox(e.Window, "Focus is on the left side.", "Test-Plugin", User32.MB_FLAGS.MB_OK);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+                case IDM_TESTMENU:
+                {
+                    User32.MessageBox(e.Window, "Hi test!", "IDM_TESTMENU", User32.MB_FLAGS.MB_OK);
+                    break;
+                }
+
+                case IDM_TOGGLE:
+                {
+                    User32.MessageBox(e.Window, _toggled ? "Hi On" : "Hi Off", "IDM_TOGGLE", User32.MB_FLAGS.MB_OK);
+                    _toggled = !_toggled;
+                    break;
+                }
+
+                default:
+                {
+                    User32.MessageBox(e.Window, $"Unrecognized idm: {e.Command}", "Error", User32.MB_FLAGS.MB_OK);
+                    _toggled = !_toggled;
+                    break;
+                }
+            }
+            return base.OnCommand(e);
         }
     }
 }
