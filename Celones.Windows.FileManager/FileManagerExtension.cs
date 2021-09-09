@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Vanara.PInvoke;
 using static Celones.Windows.FileManager.Interop;
 
 namespace Celones.Windows.FileManager
@@ -16,10 +17,14 @@ namespace Celones.Windows.FileManager
         public event EventHandler<ContextHelpEventArgs> ContextHelp;
         public event EventHandler<CommandEventArgs> Command;
 
+        public FocusTarget Focus => (FocusTarget)User32.SendMessage(_latestWnd, FM_GETFOCUS);
+
         private IntPtr _buttons;
+        private HWND _latestWnd;
 
         public int ExtensionProc(IntPtr hWnd, IntPtr wEvent, IntPtr lParam)
         {
+            _latestWnd = hWnd;
             switch ((int)wEvent)
             {
                 case FMEVENT_LOAD:
