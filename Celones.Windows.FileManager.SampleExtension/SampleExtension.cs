@@ -81,7 +81,7 @@ namespace Celones.Windows.FileManager.SampleExtension
             {
                 case IDM_FIRSTBUTTON:
                 {
-                    User32.MessageBox(e.Window, $"Focus is on {Focus} area.", "Test-Plugin", User32.MB_FLAGS.MB_OK);
+                    User32.MessageBox(e.Window, $"Focus is on {Host.Focus} area.", "Test-Plugin", User32.MB_FLAGS.MB_OK);
                     break;
                 }
 

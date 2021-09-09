@@ -17,14 +17,13 @@ namespace Celones.Windows.FileManager
         public event EventHandler<ContextHelpEventArgs> ContextHelp;
         public event EventHandler<CommandEventArgs> Command;
 
-        public FocusTarget Focus => (FocusTarget)User32.SendMessage(_latestWnd, FM_GETFOCUS);
+        protected FileManagerHost Host { get; private set; }
 
         private IntPtr _buttons;
-        private HWND _latestWnd;
 
         public int ExtensionProc(IntPtr hWnd, IntPtr wEvent, IntPtr lParam)
         {
-            _latestWnd = hWnd;
+            Host = new FileManagerHost(hWnd);
             switch ((int)wEvent)
             {
                 case FMEVENT_LOAD:
