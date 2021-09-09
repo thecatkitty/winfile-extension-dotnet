@@ -14,6 +14,7 @@ namespace Celones.Windows.FileManager
         public event EventHandler SelectionChanged;
         public event EventHandler<HelpStringEventArgs> HelpString;
         public event EventHandler<ContextHelpEventArgs> ContextHelp;
+        public event EventHandler<CommandEventArgs> Command;
 
         private IntPtr _buttons;
 
@@ -73,7 +74,7 @@ namespace Celones.Windows.FileManager
                     return OnContextHelp(new ContextHelpEventArgs(hWnd, (ushort)lParam)) ? 0 : -1;
 
                 default:
-                    return 0;
+                    return OnCommand(new CommandEventArgs(hWnd, (int)wEvent));
             }
         }
 
@@ -130,6 +131,12 @@ namespace Celones.Windows.FileManager
         {
             ContextHelp?.Invoke(this, e);
             return true;
+        }
+
+        protected virtual int OnCommand(CommandEventArgs e)
+        {
+            Command?.Invoke(this, e);
+            return e.ReturnValue;
         }
     }
 }
