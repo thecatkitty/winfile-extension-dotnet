@@ -20,7 +20,7 @@ namespace Celones.Windows.FileManager.SampleExtension
 
         private readonly HINSTANCE _instance;
         private uint _menuDelta;
-        private bool _toggled = false;
+        private bool _toggled;
 
         public SampleExtension()
         {
@@ -77,25 +77,11 @@ namespace Celones.Windows.FileManager.SampleExtension
 
         protected override int OnCommand(CommandEventArgs e)
         {
-            switch (e.Command)
+            switch (e.CommandId)
             {
                 case IDM_FIRSTBUTTON:
                 {
-                    switch (Focus)
-                    {
-                        case FocusTarget.Directory:
-                        {
-                            User32.MessageBox(e.Window, "Focus is on the right side.", "Test-Plugin", User32.MB_FLAGS.MB_OK);
-                            break;
-                        }
-
-                        case FocusTarget.Tree:
-                        {
-                            User32.MessageBox(e.Window, "Focus is on the left side.", "Test-Plugin", User32.MB_FLAGS.MB_OK);
-                            break;
-                        }
-                    }
-
+                    User32.MessageBox(e.Window, $"Focus is on {Focus} area.", "Test-Plugin", User32.MB_FLAGS.MB_OK);
                     break;
                 }
 
@@ -114,12 +100,13 @@ namespace Celones.Windows.FileManager.SampleExtension
 
                 default:
                 {
-                    User32.MessageBox(e.Window, $"Unrecognized idm: {e.Command}", "Error", User32.MB_FLAGS.MB_OK);
+                    User32.MessageBox(e.Window, $"Unrecognized idm: {e.CommandId}", "Error", User32.MB_FLAGS.MB_OK);
                     _toggled = !_toggled;
-                    break;
+                    return base.OnCommand(e);
                 }
             }
-            return base.OnCommand(e);
+
+            return 0;
         }
     }
 }
