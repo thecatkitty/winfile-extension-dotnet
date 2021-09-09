@@ -47,7 +47,7 @@ namespace Celones.Windows.FileManager
         public FileInfo GetSelectedFileShortNames(int index)
         {
             var buffer = Marshal.AllocHGlobal(Marshal.SizeOf<FMS_GETFILESELW>());
-            User32.SendMessage(_hWnd, FM_GETFILESELLFN, (IntPtr)index, (long)buffer);
+            User32.SendMessage(_hWnd, FM_GETFILESEL, (IntPtr)index, (long)buffer);
 
             var info = Marshal.PtrToStructure<FMS_GETFILESELW>(buffer);
             Marshal.FreeHGlobal(buffer);

@@ -82,6 +82,19 @@ namespace Celones.Windows.FileManager.SampleExtension
                 case IDM_FIRSTBUTTON:
                 {
                     User32.MessageBox(e.Window, $"Focus is on {Host.Focus} area.", "Test-Plugin", User32.MB_FLAGS.MB_OK);
+
+                    if (Host.Focus == FocusTarget.Directory)
+                    {
+                        foreach (var file in Host.SelectedFiles)
+                        {
+                            User32.MessageBox(e.Window, file.FullName, "Selected file", User32.MB_FLAGS.MB_OK);
+                        }
+                    }
+                    else if (Host.Focus == FocusTarget.Drives)
+                    {
+                        User32.MessageBox(e.Window, Host.SelectedDrive.CurrentDirectory, "Current directory", User32.MB_FLAGS.MB_OK);
+                    }
+
                     break;
                 }
 

@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using Vanara.PInvoke;
 using static Celones.Windows.FileManager.Interop;
 
 namespace Celones.Windows.FileManager
