@@ -3,9 +3,9 @@ using Vanara.PInvoke;
 
 namespace Celones.Windows.FileManager
 {
-    public class MenuInitializeEventArgs : EventArgs
+    public class MenuInitializeEventArgs : FileManagerEventArgs
     {
-        public MenuInitializeEventArgs(HMENU menu)
+        public MenuInitializeEventArgs(FileManagerHost host, HMENU menu) : base(host)
         {
             Menu = menu;
         }

@@ -17,8 +17,12 @@ namespace Celones.Windows.FileManager
         public ToolbarButtonStyle Style { get; set; }
     }
 
-    public class ToolbarLoadEventArgs : EventArgs
+    public class ToolbarLoadEventArgs : FileManagerEventArgs
     {
+        public ToolbarLoadEventArgs(FileManagerHost host) : base(host)
+        {
+        }
+
         public IList<ToolbarButton> Buttons { get; internal set; } = new List<ToolbarButton>();
         public ushort BitmappedCount { get; set; }
         public Vanara.PInvoke.HBITMAP BitmapHandle { get; set; }

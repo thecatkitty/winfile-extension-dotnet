@@ -16,18 +16,16 @@ namespace Celones.Windows.FileManager
         public event EventHandler<ContextHelpEventArgs> ContextHelp;
         public event EventHandler<CommandEventArgs> Command;
 
-        protected FileManagerHost Host { get; private set; }
-
         private IntPtr _buttons;
 
         public int ExtensionProc(IntPtr hWnd, IntPtr wEvent, IntPtr lParam)
         {
-            Host = new FileManagerHost(hWnd);
+            var host = new FileManagerHost(hWnd);
             switch ((int)wEvent)
             {
                 case FMEVENT_LOAD:
                 {
-                    var (e, load) = EventArgsConverters.GetLoadEventArgs(lParam);
+                    var (e, load) = EventArgsConverters.GetLoadEventArgs(host, lParam);
                     if (!OnLoad(e)) return 0;
 
                     EventArgsConverters.Update(ref load, e);
@@ -39,11 +37,11 @@ namespace Celones.Windows.FileManager
                     return OnUnload() ? 0 : -1;
 
                 case FMEVENT_INITMENU:
-                    return OnMenuInitialize(EventArgsConverters.GetMenuInitializeEventArgs(lParam)) ? 0 : -1;
+                    return OnMenuInitialize(EventArgsConverters.GetMenuInitializeEventArgs(host, lParam)) ? 0 : -1;
 
                 case FMEVENT_TOOLBARLOAD:
                 {
-                    var (e, load) = EventArgsConverters.GetToolbarLoadEventArgs(lParam);
+                    var (e, load) = EventArgsConverters.GetToolbarLoadEventArgs(host, lParam);
                     if (!OnToolbarLoad(e)) return 0;
 
                     if (_buttons == IntPtr.Zero)
@@ -65,7 +63,7 @@ namespace Celones.Windows.FileManager
 
                 case FMEVENT_HELPSTRING:
                 {
-                    var (e, help) = EventArgsConverters.GetHelpStringEventArgs(lParam);
+                    var (e, help) = EventArgsConverters.GetHelpStringEventArgs(host, lParam);
                     if (!OnHelpString(e)) return -1;
 
                     EventArgsConverters.Update(ref help, e);
@@ -74,10 +72,10 @@ namespace Celones.Windows.FileManager
                 }
 
                 case FMEVENT_HELPMENUITEM:
-                    return OnContextHelp(new ContextHelpEventArgs(hWnd, (ushort)lParam)) ? 0 : -1;
+                    return OnContextHelp(new ContextHelpEventArgs(host, (ushort)lParam)) ? 0 : -1;
 
                 default:
-                    return OnCommand(new CommandEventArgs(hWnd, (int)wEvent));
+                    return OnCommand(new CommandEventArgs(host, (int)wEvent));
             }
         }
 

@@ -70,7 +70,7 @@ namespace Celones.Windows.FileManager.SampleExtension
 
         protected override bool OnContextHelp(ContextHelpEventArgs e)
         {
-            User32.MessageBox(e.Window, $"Help for {e.CommandId}", "WinHelp call", User32.MB_FLAGS.MB_OK);
+            User32.MessageBox(e.Host.Window, $"Help for {e.CommandId}", "WinHelp call", User32.MB_FLAGS.MB_OK);
             // User32.WinHelp(e.Window, "ExtHelp.hlp", User32.HelpCmd.HELP_CONTEXT, (IntPtr)e.CommandId);
             return base.OnContextHelp(e);
         }
@@ -81,18 +81,18 @@ namespace Celones.Windows.FileManager.SampleExtension
             {
                 case IDM_FIRSTBUTTON:
                 {
-                    User32.MessageBox(e.Window, $"Focus is on {Host.Focus} area.", "Test-Plugin", User32.MB_FLAGS.MB_OK);
+                    User32.MessageBox(e.Host.Window, $"Focus is on {e.Host.Focus} area.", "Test-Plugin", User32.MB_FLAGS.MB_OK);
 
-                    if (Host.Focus == FocusTarget.Directory)
+                    if (e.Host.Focus == FocusTarget.Directory)
                     {
-                        foreach (var file in Host.SelectedFiles)
+                        foreach (var file in e.Host.SelectedFiles)
                         {
-                            User32.MessageBox(e.Window, file.FullName, "Selected file", User32.MB_FLAGS.MB_OK);
+                            User32.MessageBox(e.Host.Window, file.FullName, "Selected file", User32.MB_FLAGS.MB_OK);
                         }
                     }
-                    else if (Host.Focus == FocusTarget.Drives)
+                    else if (e.Host.Focus == FocusTarget.Drives)
                     {
-                        User32.MessageBox(e.Window, Host.SelectedDrive.CurrentDirectory, "Current directory", User32.MB_FLAGS.MB_OK);
+                        User32.MessageBox(e.Host.Window, e.Host.SelectedDrive.CurrentDirectory, "Current directory", User32.MB_FLAGS.MB_OK);
                     }
 
                     break;
@@ -100,20 +100,20 @@ namespace Celones.Windows.FileManager.SampleExtension
 
                 case IDM_TESTMENU:
                 {
-                    User32.MessageBox(e.Window, "Hi test!", "IDM_TESTMENU", User32.MB_FLAGS.MB_OK);
+                    User32.MessageBox(e.Host.Window, "Hi test!", "IDM_TESTMENU", User32.MB_FLAGS.MB_OK);
                     break;
                 }
 
                 case IDM_TOGGLE:
                 {
-                    User32.MessageBox(e.Window, _toggled ? "Hi On" : "Hi Off", "IDM_TOGGLE", User32.MB_FLAGS.MB_OK);
+                    User32.MessageBox(e.Host.Window, _toggled ? "Hi On" : "Hi Off", "IDM_TOGGLE", User32.MB_FLAGS.MB_OK);
                     _toggled = !_toggled;
                     break;
                 }
 
                 default:
                 {
-                    User32.MessageBox(e.Window, $"Unrecognized idm: {e.CommandId}", "Error", User32.MB_FLAGS.MB_OK);
+                    User32.MessageBox(e.Host.Window, $"Unrecognized idm: {e.CommandId}", "Error", User32.MB_FLAGS.MB_OK);
                     _toggled = !_toggled;
                     return base.OnCommand(e);
                 }

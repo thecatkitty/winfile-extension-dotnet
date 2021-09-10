@@ -3,15 +3,13 @@ using Vanara.PInvoke;
 
 namespace Celones.Windows.FileManager
 {
-    public class ContextHelpEventArgs : EventArgs
+    public class ContextHelpEventArgs : FileManagerEventArgs
     {
-        public ContextHelpEventArgs(HWND window, ushort commandId)
+        public ContextHelpEventArgs(FileManagerHost host, ushort commandId) : base(host)
         {
-            Window = window;
             CommandId = commandId;
         }
 
-        public HWND Window { get; }
         public ushort CommandId { get; }
     }
 }

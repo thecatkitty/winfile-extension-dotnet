@@ -2,9 +2,9 @@
 
 namespace Celones.Windows.FileManager
 {
-    public class LoadEventArgs : EventArgs
+    public class LoadEventArgs : FileManagerEventArgs
     {
-        public LoadEventArgs(uint menuDelta)
+        public LoadEventArgs(FileManagerHost host, uint menuDelta) : base(host)
         {
             MenuDelta = menuDelta;
         }

@@ -6,26 +6,26 @@ namespace Celones.Windows.FileManager
 {
     static class EventArgsConverters
     {
-        public static (LoadEventArgs, FMS_LOADW) GetLoadEventArgs(IntPtr ptr)
+        public static (LoadEventArgs, FMS_LOADW) GetLoadEventArgs(FileManagerHost host, IntPtr ptr)
         {
             var load = Marshal.PtrToStructure<FMS_LOADW>(ptr);
-            var e = new LoadEventArgs(load.wMenuDelta);
+            var e = new LoadEventArgs(host, load.wMenuDelta);
             return (e, load);
         }
 
-        public static MenuInitializeEventArgs GetMenuInitializeEventArgs(IntPtr ptr) => new(ptr);
+        public static MenuInitializeEventArgs GetMenuInitializeEventArgs(FileManagerHost host, IntPtr ptr) => new(host, ptr);
 
-        public static (ToolbarLoadEventArgs, FMS_TOOLBARLOAD) GetToolbarLoadEventArgs(IntPtr ptr)
+        public static (ToolbarLoadEventArgs, FMS_TOOLBARLOAD) GetToolbarLoadEventArgs(FileManagerHost host, IntPtr ptr)
         {
             var load = Marshal.PtrToStructure<FMS_TOOLBARLOAD>(ptr);
-            var e = new ToolbarLoadEventArgs();
+            var e = new ToolbarLoadEventArgs(host);
             return (e, load);
         }
 
-        public static (HelpStringEventArgs, FMS_HELPSTRINGW) GetHelpStringEventArgs(IntPtr ptr)
+        public static (HelpStringEventArgs, FMS_HELPSTRINGW) GetHelpStringEventArgs(FileManagerHost host, IntPtr ptr)
         {
             var help = Marshal.PtrToStructure<FMS_HELPSTRINGW>(ptr);
-            var e = new HelpStringEventArgs(help.idCommand, help.hMenu);
+            var e = new HelpStringEventArgs(host, help.idCommand, help.hMenu);
             return (e, help);
         }
 
