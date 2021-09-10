@@ -4,7 +4,7 @@ using static Celones.Windows.FileManager.Interop;
 
 namespace Celones.Windows.FileManager
 {
-    public abstract class FileManagerExtension
+    public class FileManagerExtension
     {
         public event EventHandler<LoadEventArgs> Load;
         public event EventHandler Unload;
@@ -89,19 +89,19 @@ namespace Celones.Windows.FileManager
         protected virtual bool OnLoad(LoadEventArgs e)
         {
             Load?.Invoke(this, e);
-            return true;
+            return Load is not null;
         }
 
         protected virtual bool OnUnload()
         {
             Unload?.Invoke(this, EventArgs.Empty);
-            return true;
+            return Unload is not null;
         }
 
         protected virtual bool OnMenuInitialize(MenuInitializeEventArgs e)
         {
             MenuInitialize?.Invoke(this, e);
-            return true;
+            return MenuInitialize is not null;
         }
 
         protected virtual bool OnToolbarLoad(ToolbarLoadEventArgs e)
@@ -113,25 +113,25 @@ namespace Celones.Windows.FileManager
         protected virtual bool OnUserRefresh()
         {
             UserRefresh?.Invoke(this, EventArgs.Empty);
-            return true;
+            return UserRefresh is not null;
         }
 
         protected virtual bool OnSelectionChanged()
         {
             SelectionChanged?.Invoke(this, EventArgs.Empty);
-            return true;
+            return SelectionChanged is not null;
         }
 
         protected virtual bool OnHelpString(HelpStringEventArgs e)
         {
             HelpString?.Invoke(this, e);
-            return true;
+            return HelpString is not null;
         }
 
         protected virtual bool OnContextHelp(ContextHelpEventArgs e)
         {
             ContextHelp?.Invoke(this, e);
-            return true;
+            return ContextHelp is not null;
         }
 
         protected virtual int OnCommand(CommandEventArgs e)
