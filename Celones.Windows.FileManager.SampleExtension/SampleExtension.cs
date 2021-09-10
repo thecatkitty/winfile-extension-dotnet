@@ -1,7 +1,6 @@
 ﻿using Vanara.PInvoke;
 using System;
 using System.Runtime.InteropServices;
-using System.Linq;
 // ReSharper disable InconsistentNaming
 
 namespace Celones.Windows.FileManager.SampleExtension
@@ -12,8 +11,10 @@ namespace Celones.Windows.FileManager.SampleExtension
         private const int IDM_TESTMENU = 2;
         private const int IDM_TOGGLE = 8;
 
+        private const int IDB_TEST = 102;
+
         private static readonly FileManagerExtension s_extension;
-        private static readonly HINSTANCE s_instance;
+        private static readonly User32.SafeHMENU s_menu;
         private static uint s_menuDelta;
         private static bool s_toggled;
 
@@ -23,10 +24,6 @@ namespace Celones.Windows.FileManager.SampleExtension
 
         static SampleExtension()
         {
-            var name = typeof(SampleExtension).Namespace + ".dll";
-            s_instance = Kernel32.EnumProcessModules(Kernel32.GetCurrentProcess())
-                .First(module => Kernel32.GetModuleFileName(module).EndsWith(name));
-
             s_extension = new();
             s_extension.Load += LoadEventHandler;
             s_extension.MenuInitialize += MenuInitializeEventHandler;
@@ -34,12 +31,16 @@ namespace Celones.Windows.FileManager.SampleExtension
             s_extension.HelpString += HelpStringEventHandler;
             s_extension.ContextHelp += ContextHelpEventHandler;
             s_extension.Command += CommandEventHandler;
+
+            s_menu = User32.CreateMenu();
+            User32.InsertMenu(s_menu, uint.MaxValue, User32.MenuFlags.MF_BYPOSITION, (IntPtr)IDM_TESTMENU, "Test entry 1234");
+            User32.InsertMenu(s_menu, uint.MaxValue, User32.MenuFlags.MF_BYPOSITION, (IntPtr)IDM_TOGGLE, "Toggle");
         }
 
         private static void LoadEventHandler(object sender, LoadEventArgs e)
         {
             e.MenuName = "AddonSampleMenu";
-            e.MenuHandle = User32.GetSubMenu(User32.LoadMenu(s_instance, 101), 0);
+            e.MenuHandle = s_menu;
             s_menuDelta = e.MenuDelta;
         }
 
@@ -57,7 +58,7 @@ namespace Celones.Windows.FileManager.SampleExtension
         {
             e.Buttons.Add(new ToolbarButton { CommandId = IDM_FIRSTBUTTON });
             e.BitmappedCount = 1;
-            e.BitmapId = 102;
+            e.BitmapId = IDB_TEST;
         }
 
         private static void HelpStringEventHandler(object sender, HelpStringEventArgs e)
